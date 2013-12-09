@@ -17,6 +17,9 @@ my $fastqFile = $ARGV[0];
 my $barcodeFile = $ARGV[1];
 
 ### Parse barcode file
+  # Name	Sequence	Orientation 
+  # 1f		ACAGTATATA	Forward
+
 open(FILE,$barcodeFile) || die("Can't open $barcodeFile");
 my %forwardBarcodes;
 my %reverseBarcodes;
