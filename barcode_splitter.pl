@@ -1,9 +1,9 @@
 #!usr/bin/perl -w
 ### Robert Ernst
-### 28-11-2013
-### Finds barcodes (perfect match) in fastq file
-### Output fragments to fastq files based on sample file
-### Prints fragment statistics.
+### 02-01-2014
+### Reads a FASTQ file and splits it into several files, based on barcode matching (perfect match).
+### Outputs reads to fastq files
+### Statistics will be printed to STDOUT
 
 use strict;
 use Data::Dumper;
