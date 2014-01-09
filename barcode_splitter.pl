@@ -1,12 +1,12 @@
-#!usr/bin/perl -w
+#!usr/bin/perl
 ### Robert Ernst
-### 02-01-2014
-### Reads a FASTQ file and splits it into several files, based on barcode matching (perfect match).
+### 09-01-2014
+### Reads a FASTQ file and splits it into several fastq files, based on barcode matching (perfect match).
 ### Outputs reads to fastq files
 ### Statistics will be printed to STDOUT
 
 use strict;
-use Data::Dumper;
+use warnings;
 
 ### Command line arguments
 if ($#ARGV != 2 ) {
@@ -51,6 +51,7 @@ close(FILE);
 unless(-e "fastqOut" or mkdir "fastqOut") {
   die "Unable to create output directory";
 }
+
 # create fastq file for each sample.
 my %files;
 foreach my $sample (keys(%samples)) {
@@ -61,8 +62,8 @@ foreach my $sample (keys(%samples)) {
 }
 
 ### Setup variables.
-my $readLinePosition = 0;
-my $countReads = 0;
+my $readLinePosition;
+my $countReads;
 my %countBarcodes;
 my $read;
 
@@ -71,8 +72,8 @@ my $fragment;
 my $fragment_start;
 my $fragment_end;
 my $quality;
-my $complete = 0;
-my $completeFragments = 0;
+my $complete;
+my $completeFragments;
 my $sample;
 
 my $readLine1;
@@ -114,8 +115,9 @@ while (<FILE>) {
     
     ### complete fragment found
       # count length
-      # 
-    if (length($keyForward . $keyReverse) > 3){
+      # select fragment
+    if (($keyForward ne "") && ($keyReverse ne "")) {  
+    #if (length($keyForward . $keyReverse) > 3){
       $read =~ m/$forwardBarcodes{$keyForward}(.*)$reverseBarcodes{$keyReverse}/; #find fragment
       if (length($1)) {
 	$fragmentLength{$keyForward . $keyReverse} += length($1);
@@ -126,6 +128,8 @@ while (<FILE>) {
 	
 	$sample = $keyForward . $keyReverse;
 	$complete = 1;
+	$keyForward = "";
+	$keyReverse = "";
       }
     }
   }
@@ -135,6 +139,8 @@ while (<FILE>) {
   ### read ends on line 4
     # if complete print read to correct fastq file
   elsif ($readLinePosition == 4) {
+    $countReads++;
+    $readLinePosition = 0;
     if ($complete == 1){
       $quality = $_;
       chomp($quality);
@@ -143,16 +149,11 @@ while (<FILE>) {
       print $file "$readLine1$fragment\n$readLine3$quality\n";
       $complete = 0;
     }
-  
-    $readLinePosition = 0;
-    $countReads++;
   }
 }
 close(FILE);
 
-my $total_count = 0; #count fragments.
-
-### Print output -> tab delim .txt file
+### Print statistics -> tab delim .txt file
 print "Barcode \t SampleName \t Count \t Percentage \t Mean fragment length \n";
 for my $key ( keys(%countBarcodes)){
     my $count = $countBarcodes{$key};
@@ -160,11 +161,7 @@ for my $key ( keys(%countBarcodes)){
     print "$key\t";
     if ($samples{$key}) { print "$samples{$key}\t" ; } else { print "No sample \t"; }
     print "$count \t $percentage \t";
-    if (length($key) > 3){
-      print $fragmentLength{$key} / $count;
-    }
-    $total_count += $count;
+    if ($samples{$key}) { print $fragmentLength{$key} / $count; } else { print "No sample"; }
     print "\n";
 }
 print "Total number of reads \t $countReads\n";
-print "Total number of counts \t $total_count\n"; # compare with total reads -> should be equal!
