@@ -1,0 +1,27 @@
+Plot HS Metrics
+========================================================
+Bait interval file = `r levels(summaryTable$baitIntervals)`
+
+Target interval file = `r levels(summaryTable$targetIntervals)`
+
+```{r echo=FALSE, fig.width=10, fig.height=10}
+ggplot(summaryTable, aes(x=sampleShort, y=PCT_OFF_BAIT, fill=sampleShort)) + 
+  geom_bar(stat="identity") +
+  xlab("Sample") + ylab("Percentage off bait") +
+  scale_fill_manual(name="", values=cbPalette)+
+  ggtitle("Percentage off bait")
+
+ggplot(summaryTable, aes(x=sampleShort, y=MEAN_TARGET_COVERAGE, fill=sampleShort)) + 
+  geom_bar(stat="identity") +
+  xlab("Sample") + ylab("Mean target coverage") +
+  scale_fill_manual(name="", values=cbPalette) +
+  ggtitle("Mean target coverage")
+```
+
+```{r echo=FALSE, fig.width=20, fig.height=10}
+ggplot(summaryTableMelted,aes(x = sampleShort, y = value)) + 
+  geom_bar(aes(fill=variable), stat="identity",position = "dodge") +
+  xlab("Sample") + ylab("Percentage") +
+  scale_fill_manual(name="", values=cbPalette) +
+  ggtitle("Percentage target bases")
+```
