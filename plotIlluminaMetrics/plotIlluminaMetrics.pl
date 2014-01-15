@@ -1,6 +1,7 @@
 #!/usr/bin/perl
-### Plot HSMetric
-#   13-01-2013
+### Plot Illumina Metrics
+### Robert Ernst
+### 15-01-2013
 
 use warnings;
 use strict;
@@ -25,10 +26,10 @@ foreach my $file (@files) {
     my $baitIntervals;
     my $targetIntervals;
     
-    #Processing headerlines -> beginning with # or " ".
+    #Processing headerlines -> beginning with # or empty lines.
     while(<FILE> =~ /(^\s*#)(.*)/ || <FILE> eq "") {
         my $headerLine = $2;
-        if ($headerLine =~ m/BAIT_INTERVALS=(\S*).TARGET_INTERVALS=(\S*)/){
+        if ($headerLine =~ m/BAIT_INTERVALS=(\S*).TARGET_INTERVALS=(\S*)/){ #grep bait and target interval file settings.
             $baitIntervals = $1;
             $targetIntervals = $2;
 		}
@@ -36,12 +37,12 @@ foreach my $file (@files) {
     
    #Processing table
     my $tableHeader =  <FILE>;
-    unless ($printedHeader) { 
-        print SUMFILE "sample \t sampleShort \t baitIntervals \t targetIntervals \t". $tableHeader;
+    unless ($printedHeader) { #print table header once.
+        print SUMFILE "sample \t sampleShort \t baitIntervals \t targetIntervals \t". $tableHeader; 
         $printedHeader = 1;
     }
     
-    my $line = <FILE>;
+    my $line = <FILE>; #grep statistics, here we assume one row with statistics.
     my $sample = (split("/",$file))[0];
     my $sampleShort = (split("_",$file))[0];
     print SUMFILE $sample ."\t". $sampleShort ."\t". $baitIntervals ."\t". $targetIntervals ."\t". $line;
