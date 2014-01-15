@@ -19,7 +19,7 @@ summaryTableMelted = melt(summaryTable[,c('sampleShort','PCT_TARGET_BASES_2X','P
 cbPalette <- c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
 
 #Plot metrics to pdf file.
-pdf("plotHSMetric.pdf", width=20, height=10)
+pdf("picardMetrics.pdf", width=20, height=10)
 
 for(i in 1:nrow(summaryTable)) {
   sample = paste(summaryTable[i,]$sample, summaryTable[i,]$sample, sep="/")
@@ -78,8 +78,8 @@ dev.off() #close pdf
 
 #Generate .html based on R Markdown
 workingDir = getwd()
-knit(paste(dirName,"plotHSMetric.Rmd", sep="/"))
-markdownToHTML("plotHSMetric.md", 'plotHSMetric.html', options=c("use_xhml"))
+knit(paste(dirName,"plotIlluminaMetrics_markdown.Rmd", sep="/"))
+markdownToHTML("plotIlluminaMetrics_markdown.md", 'picardMetrics.html', options=c("use_xhml"))
 
 #Transpose and write table
 summaryTableT = t(summaryTable)

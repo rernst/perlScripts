@@ -46,5 +46,5 @@ foreach my $file (@files) {
 }
 
 ### Run R plot script and markdown to generate pdf
-`Rscript $rootDir/plotHSMetric.R $fileName $rootDir`;
-`rm plotHSMetric.md`;
+`Rscript $rootDir/plotIlluminaMetrics.R $fileName $rootDir`;
+`rm plotIlluminaMetrics_markdown.md`;
