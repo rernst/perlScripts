@@ -7,9 +7,10 @@ require(reshape)
 # Parse command line arguments
 args<-commandArgs(trailingOnly=TRUE)
 fileName = args[1]
-dirName = args[2]
+rootDir = args[2]
+runName = args[3]
 #fileName = "HSMetric_summary.txt" # testing
-#dirName = "." #testing
+#rootDir = "." #testing
 
 #Read in table
 summaryTable = read.table(file=fileName, sep="\t", header=TRUE, stringsAsFactors=FALSE)
@@ -19,7 +20,7 @@ summaryTableMelted = melt(summaryTable[,c('sampleShort','PCT_TARGET_BASES_2X','P
 cbPalette <- c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
 
 #Plot metrics to pdf file.
-pdf("picardMetrics.pdf", width=20, height=10)
+pdf(paste(runName,"picardMetrics.pdf", sep="."), width=20, height=10)
 
 for(i in 1:nrow(summaryTable)) {
   sample = paste(summaryTable[i,]$sample, summaryTable[i,]$sample, sep="/")
@@ -78,9 +79,9 @@ dev.off() #close pdf
 
 #Generate .html based on R Markdown
 workingDir = getwd()
-knit(paste(dirName,"plotIlluminaMetrics_markdown.Rmd", sep="/"))
-markdownToHTML("plotIlluminaMetrics_markdown.md", 'picardMetrics.html', options=c("use_xhml"))
+knit(paste(rootDir,"plotIlluminaMetrics_markdown.Rmd", sep="/"))
+markdownToHTML("plotIlluminaMetrics_markdown.md", paste(runName,"picardMetrics.html",sep="."), options=c("use_xhml"))
 
 #Transpose and write table
 summaryTableT = t(summaryTable)
-write.table(summaryTableT, file="HSMetric_summary_transposed.txt", sep="\t", col.names=FALSE, na="", quote=FALSE)
+write.table(summaryTableT, file=paste(runName,"HSMetric_summary.transposed.txt", sep="."), col.names=FALSE, na="", quote=FALSE, sep="\t")

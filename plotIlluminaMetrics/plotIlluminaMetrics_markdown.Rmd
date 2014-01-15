@@ -1,7 +1,7 @@
 Sample statistics
 ========================================================
 
-```{r multipleplots, echo=FALSE, fig.width=7, fig.height=7}
+```{r sampleMetrics, echo=FALSE, fig.width=7, fig.height=7}
 for(i in 1:nrow(summaryTable)) {
   sample = paste(summaryTable[i,]$sample, summaryTable[i,]$sample, sep="/")
   wd_sample = paste(workingDir, sample, sep="/")
@@ -41,7 +41,7 @@ Bait interval file = `r unique(summaryTable$baitIntervals)`
 
 Target interval file = `r unique(summaryTable$targetIntervals)`
 
-```{r echo=FALSE, fig.width=10, fig.height=10}
+```{r HSMetrics, echo=FALSE, fig.width=10, fig.height=10}
 ggplot(summaryTable, aes(x=sampleShort, y=PCT_OFF_BAIT, fill=sampleShort)) + 
   geom_bar(stat="identity") +
   xlab("Sample") + ylab("Percentage off bait") +

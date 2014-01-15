@@ -9,9 +9,11 @@ use strict;
 use Cwd            qw( abs_path );
 use File::Basename qw( dirname );
 my $rootDir = dirname(abs_path($0));
+my $runDir = abs_path();
+my $runName = (split("/", $runDir))[-1];
 
 ### Setup variables
-my $fileName = "HSMetric_summary.txt";
+my $fileName = $runName.".HSMetric_summary.txt";
 open(SUMFILE, ">", $fileName) || die ("Can't open if $fileName");
 my @files = grep -f, <*/*HSMetrics\.txt>;
 my $printedHeader = 0;
@@ -46,5 +48,5 @@ foreach my $file (@files) {
 }
 
 ### Run R plot script and markdown to generate pdf
-`Rscript $rootDir/plotIlluminaMetrics.R $fileName $rootDir`;
+`Rscript $rootDir/plotIlluminaMetrics.R $fileName $rootDir $runName`;
 `rm plotIlluminaMetrics_markdown.md`;
