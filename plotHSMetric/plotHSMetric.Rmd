@@ -1,8 +1,45 @@
-Plot HS Metrics
+Sample statistics
 ========================================================
-Bait interval file = `r levels(summaryTable$baitIntervals)`
 
-Target interval file = `r levels(summaryTable$targetIntervals)`
+```{r multipleplots, echo=FALSE, fig.width=7, fig.height=7}
+for(i in 1:nrow(summaryTable)) {
+  sample = paste(summaryTable[i,]$sample, summaryTable[i,]$sample, sep="/")
+  wd_sample = paste(workingDir, sample, sep="/")
+  insert_size_metrics = paste(wd_sample,"_MERGED_sorted_dedup_MultipleMetrics.txt.insert_size_metrics", sep="")
+  quality_by_cycle_metrics = paste(wd_sample,"_MERGED_sorted_dedup_MultipleMetrics.txt.quality_by_cycle_metrics", sep="")
+  quality_distribution_metrics = paste(wd_sample,"_MERGED_sorted_dedup_MultipleMetrics.txt.quality_distribution_metrics", sep="")
+  
+  insert_size_metrics.table = read.table(file=insert_size_metrics, skip=8, head=TRUE)
+  quality_by_cycle_metrics.table = read.table(file=quality_by_cycle_metrics, head=TRUE)
+  quality_distribution_metrics.table = read.table(file=quality_distribution_metrics, head=TRUE)
+  
+  cat(paste("Sample =",summaryTable[i,]$sampleShort))
+  
+  print(ggplot(insert_size_metrics.table, aes(x=insert_size, y=All_Reads.fr_count)) + 
+    geom_bar(stat="identity", width=1, fill="#0072B2") +
+    xlab("Insert size") + ylab("Count") +
+    scale_fill_manual(name="", values=cbPalette)+
+    ggtitle(paste("Insert size for all reads in", summaryTable[i,]$sample, sep=" ")))
+  
+  print(ggplot(quality_by_cycle_metrics.table, aes(x=CYCLE, y=MEAN_QUALITY)) + 
+    geom_bar(stat="identity", width=1, fill="#0072B2") +
+    xlab("Cycle") + ylab("Mean Quality") +
+    scale_fill_manual(name="", values=cbPalette)+
+    ggtitle(paste("Quality by cycle in", summaryTable[i,]$sample, sep=" ")))
+  
+  print(ggplot(quality_distribution_metrics.table, aes(x=QUALITY, y=COUNT_OF_Q)) + 
+    geom_bar(stat="identity", fill="#0072B2") +
+    xlab("Quality Score") + ylab("Observations") +
+    scale_fill_manual(name="", values=cbPalette)+
+    ggtitle(paste("Quality score distribution in", summaryTable[i,]$sample, sep=" ")))
+}
+```
+
+Hybrid selection specific metrics
+========================================================
+Bait interval file = `r unique(summaryTable$baitIntervals)`
+
+Target interval file = `r unique(summaryTable$targetIntervals)`
 
 ```{r echo=FALSE, fig.width=10, fig.height=10}
 ggplot(summaryTable, aes(x=sampleShort, y=PCT_OFF_BAIT, fill=sampleShort)) + 

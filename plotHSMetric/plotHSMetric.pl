@@ -5,6 +5,11 @@
 use warnings;
 use strict;
 
+#get dir where plotHSMetric is installed
+use Cwd            qw( abs_path );
+use File::Basename qw( dirname );
+my $rootDir = dirname(abs_path($0));
+
 ### Setup variables
 my $fileName = "HSMetric_summary.txt";
 open(SUMFILE, ">", $fileName) || die ("Can't open if $fileName");
@@ -41,4 +46,5 @@ foreach my $file (@files) {
 }
 
 ### Run R plot script and markdown to generate pdf
-`Rscript plotHSMetric.R $fileName`;
+`Rscript $rootDir/plotHSMetric.R $fileName $rootDir`;
+`rm plotHSMetric.md`;

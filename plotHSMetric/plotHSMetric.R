@@ -5,12 +5,14 @@ require(markdown)
 require(reshape)
 
 # Parse command line arguments
-# fileName = args[1]
 args<-commandArgs(trailingOnly=TRUE)
-#args[1] = "HSMetric_summary.txt" # testing
+fileName = args[1]
+dirName = args[2]
+#fileName = "HSMetric_summary.txt" # testing
+#dirName = "." #testing
 
 #Read in table
-summaryTable = read.table(file=args[1], sep="\t", header=TRUE)
+summaryTable = read.table(file=fileName, sep="\t", header=TRUE, stringsAsFactors=FALSE)
 summaryTableMelted = melt(summaryTable[,c('sampleShort','PCT_TARGET_BASES_2X','PCT_TARGET_BASES_10X','PCT_TARGET_BASES_20X','PCT_TARGET_BASES_30X','PCT_TARGET_BASES_40X','PCT_TARGET_BASES_50X','PCT_TARGET_BASES_100X')],id.vars = 1)
 
 #Custom colorscale used for plotting
@@ -18,6 +20,36 @@ cbPalette <- c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2",
 
 #Plot metrics to pdf file.
 pdf("plotHSMetric.pdf", width=20, height=10)
+
+for(i in 1:nrow(summaryTable)) {
+  sample = paste(summaryTable[i,]$sample, summaryTable[i,]$sample, sep="/")
+  
+  insert_size_metrics = paste(sample,"_MERGED_sorted_dedup_MultipleMetrics.txt.insert_size_metrics", sep="")
+  quality_by_cycle_metrics = paste(sample,"_MERGED_sorted_dedup_MultipleMetrics.txt.quality_by_cycle_metrics", sep="")
+  quality_distribution_metrics = paste(sample,"_MERGED_sorted_dedup_MultipleMetrics.txt.quality_distribution_metrics", sep="")
+  
+  insert_size_metrics.table = read.table(file=insert_size_metrics, skip=8, head=TRUE)
+  quality_by_cycle_metrics.table = read.table(file=quality_by_cycle_metrics, head=TRUE)
+  quality_distribution_metrics.table = read.table(file=quality_distribution_metrics, head=TRUE)
+  
+  print(ggplot(insert_size_metrics.table, aes(x=insert_size, y=All_Reads.fr_count)) + 
+    geom_bar(stat="identity", width=1, fill="#0072B2") +
+    xlab("Insert size") + ylab("Count") +
+    scale_fill_manual(name="", values=cbPalette)+
+    ggtitle(paste("Insert size for all reads in", summaryTable[i,]$sample, sep=" ")))
+  
+  print(ggplot(quality_by_cycle_metrics.table, aes(x=CYCLE, y=MEAN_QUALITY)) + 
+    geom_bar(stat="identity", width=1, fill="#0072B2") +
+    xlab("Cycle") + ylab("Mean Quality") +
+    scale_fill_manual(name="", values=cbPalette)+
+    ggtitle(paste("Quality by cycle in", summaryTable[i,]$sample, sep=" ")))
+  
+  print(ggplot(quality_distribution_metrics.table, aes(x=QUALITY, y=COUNT_OF_Q)) + 
+    geom_bar(stat="identity", fill="#0072B2") +
+    xlab("Quality Score") + ylab("Observations") +
+    scale_fill_manual(name="", values=cbPalette)+
+    ggtitle(paste("Quality score distribution in", summaryTable[i,]$sample, sep=" ")))
+}
 
 ggplot(summaryTable, aes(x=sampleShort, y=PCT_OFF_BAIT, fill=sampleShort)) + 
   geom_bar(stat="identity") +
@@ -39,15 +71,16 @@ ggplot(summaryTableMelted,aes(x = sampleShort, y = value)) +
 
 #Plot bait and target interval files.
 plot(0:10, type = "n", xaxt="n", yaxt="n", bty="n", xlab = "", ylab = "")
-text(5, 8, paste("Bait interval file =",levels(summaryTable$baitIntervals), sep=" "))
-text(5, 7, paste("Target interval file= ", levels(summaryTable$targetIntervals), sep=" "))
+text(5, 8, paste("Bait interval file =",unique(summaryTable$baitIntervals), sep=" "))
+text(5, 7, paste("Target interval file= ", unique(summaryTable$targetIntervals), sep=" "))
 
 dev.off() #close pdf
 
 #Generate .html based on R Markdown
-knit("plotHSMetric.Rmd")
-markdownToHTML('plotHSMetric.md', 'plotHSMetric.html', options=c("use_xhml"))
+workingDir = getwd()
+knit(paste(dirName,"plotHSMetric.Rmd", sep="/"))
+markdownToHTML("plotHSMetric.md", 'plotHSMetric.html', options=c("use_xhml"))
 
 #Transpose and write table
 summaryTableT = t(summaryTable)
-write.table(summaryTableT, file="HSMetric_summary_transposed.txt", sep="\t", col.names=FALSE, row.names=FALSE, na="", quote=FALSE)
+write.table(summaryTableT, file="HSMetric_summary_transposed.txt", sep="\t", col.names=FALSE, na="", quote=FALSE)
