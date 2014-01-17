@@ -105,7 +105,6 @@ write.table(summaryTableT, file=paste(runName,"HSMetric_summary.transposed.txt",
 
 #Generate .html based on R Markdown
 workingDir = getwd()
+options(knitr.unnamed.chunk.label = runName)
 knit(paste(rootDir,"plotIlluminaMetrics_markdown.Rmd", sep="/"))
 markdownToHTML("plotIlluminaMetrics_markdown.md", paste(runName,"picardMetrics.html",sep="."), options=c("use_xhml"), stylesheet=paste(rootDir,"markdown.css", sep="/"))
-#knit_bootstrap(paste(rootDir,"plotIlluminaMetrics_markdown.Rmd", sep="/"), output=paste(runName,"picardMetrics.bootstrap.html",sep="."))
-

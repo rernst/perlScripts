@@ -1,7 +1,7 @@
 Sample statistics
 ========================================================
 
-```{r sampleMetrics, echo=FALSE, fig.width=7, fig.height=7}
+```{r echo=FALSE, fig.width=7, fig.height=7}
 for(i in 1:nrow(summaryTable)) {
   sample = paste(summaryTable[i,]$sample, summaryTable[i,]$sample, sep="/")
   wd_sample = paste(workingDir, sample, sep="/")
@@ -22,7 +22,7 @@ for(i in 1:nrow(summaryTable)) {
     ggtitle(paste("Insert size for all reads in", summaryTable[i,]$sample, sep=" ")) +
     theme(axis.title = element_text(face="bold", size=15),
           axis.text = element_text(size=15),
-          plot.title = element_text(size=15, face ="bold")))
+          plot.title = element_text(size=12, face ="bold")))
   
   print(ggplot(quality_by_cycle_metrics.table, aes(x=CYCLE, y=MEAN_QUALITY)) + 
     geom_bar(stat="identity", width=1, fill="#0072B2") +
@@ -31,7 +31,7 @@ for(i in 1:nrow(summaryTable)) {
     ggtitle(paste("Quality by cycle in", summaryTable[i,]$sample, sep=" ")) +
           theme(axis.title = element_text(face="bold", size=15),
                 axis.text = element_text(size=15),
-                plot.title = element_text(size=15, face ="bold")))
+                plot.title = element_text(size=12, face ="bold")))
   
   print(ggplot(quality_distribution_metrics.table, aes(x=QUALITY, y=COUNT_OF_Q)) + 
     geom_bar(stat="identity", fill="#0072B2") +
@@ -40,7 +40,7 @@ for(i in 1:nrow(summaryTable)) {
     ggtitle(paste("Quality score distribution in", summaryTable[i,]$sample, sep=" ")) +
           theme(axis.title = element_text(face="bold", size=15),
                 axis.text = element_text(size=15),
-                plot.title = element_text(size=15, face ="bold")))
+                plot.title = element_text(size=12, face ="bold")))
 }
 ```
 
@@ -50,7 +50,7 @@ Bait interval file = `r unique(summaryTable$baitIntervals)`
 
 Target interval file = `r unique(summaryTable$targetIntervals)`
 
-```{r HSMetrics, echo=FALSE, fig.width=10, fig.height=10}
+```{r echo=FALSE, fig.width=10, fig.height=10}
 ggplot(summaryTable, aes(x=sampleShort, y=PCT_OFF_BAIT, fill=sampleShort)) + 
   geom_bar(stat="identity") +
   xlab("Sample") + ylab("Percentage off bait") +
@@ -59,7 +59,7 @@ ggplot(summaryTable, aes(x=sampleShort, y=PCT_OFF_BAIT, fill=sampleShort)) +
   theme(axis.title = element_text(face="bold", size=15),
         axis.text = element_text(size=15),
         legend.text = element_text(size=15),
-        plot.title = element_text(size=15, face ="bold"))
+        plot.title = element_text(size=12, face ="bold"))
 
 ggplot(summaryTable, aes(x=sampleShort, y=MEAN_TARGET_COVERAGE, fill=sampleShort)) + 
   geom_bar(stat="identity") +
@@ -69,7 +69,7 @@ ggplot(summaryTable, aes(x=sampleShort, y=MEAN_TARGET_COVERAGE, fill=sampleShort
   theme(axis.title = element_text(face="bold", size=15),
         axis.text = element_text(size=15),
         legend.text = element_text(size=15),
-        plot.title = element_text(size=15, face ="bold"))
+        plot.title = element_text(size=12, face ="bold"))
 ```
 
 ```{r echo=FALSE, fig.width=20, fig.height=10}
@@ -81,7 +81,7 @@ ggplot(summaryTableMelted,aes(x = sampleShort, y = value)) +
   theme(axis.title = element_text(face="bold", size=15),
         axis.text = element_text(size=15),
         legend.text = element_text(size=15),
-        plot.title = element_text(size=15, face ="bold"))
+        plot.title = element_text(size=12, face ="bold"))
 ```
 
 Hybrid selection specific metrics summary table
