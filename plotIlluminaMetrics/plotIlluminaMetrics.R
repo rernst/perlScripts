@@ -11,8 +11,6 @@ args<-commandArgs(trailingOnly=TRUE)
 fileName = args[1]
 rootDir = args[2]
 runName = args[3]
-fileName = "test.HSMetric_summary.txt" # testing
-#rootDir = "." #testing
 
 #Read in table
 summaryTable = read.table(file=fileName, sep="\t", header=TRUE, stringsAsFactors=FALSE)
