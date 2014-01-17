@@ -1,15 +1,17 @@
 ### Plot metrics in HSMetric_summary file
 require(ggplot2)
 require(knitr)
+#require(knitrBootstrap)
 require(markdown)
 require(reshape)
+require(xtable)
 
 # Parse command line arguments
 args<-commandArgs(trailingOnly=TRUE)
 fileName = args[1]
 rootDir = args[2]
 runName = args[3]
-#fileName = "HSMetric_summary.txt" # testing
+fileName = "test.HSMetric_summary.txt" # testing
 #rootDir = "." #testing
 
 #Read in table
@@ -29,7 +31,7 @@ for(i in 1:nrow(summaryTable)) {
   quality_by_cycle_metrics = paste(sample,"_MERGED_sorted_dedup_MultipleMetrics.txt.quality_by_cycle_metrics", sep="")
   quality_distribution_metrics = paste(sample,"_MERGED_sorted_dedup_MultipleMetrics.txt.quality_distribution_metrics", sep="")
   
-  insert_size_metrics.table = read.table(file=insert_size_metrics, skip=8, head=TRUE)
+  insert_size_metrics.table = read.table(file=insert_size_metrics, skip=10, head=TRUE)
   quality_by_cycle_metrics.table = read.table(file=quality_by_cycle_metrics, head=TRUE)
   quality_distribution_metrics.table = read.table(file=quality_distribution_metrics, head=TRUE)
   
@@ -37,38 +39,59 @@ for(i in 1:nrow(summaryTable)) {
     geom_bar(stat="identity", width=1, fill="#0072B2") +
     xlab("Insert size") + ylab("Count") +
     scale_fill_manual(name="", values=cbPalette)+
-    ggtitle(paste("Insert size for all reads in", summaryTable[i,]$sample, sep=" ")))
+    ggtitle(paste("Insert size for all reads in", summaryTable[i,]$sample, sep=" ")) +
+    theme(axis.title = element_text(face="bold", size=15),
+          axis.text = element_text(size=15),
+          plot.title = element_text(size=15, face ="bold")))
   
   print(ggplot(quality_by_cycle_metrics.table, aes(x=CYCLE, y=MEAN_QUALITY)) + 
     geom_bar(stat="identity", width=1, fill="#0072B2") +
     xlab("Cycle") + ylab("Mean Quality") +
     scale_fill_manual(name="", values=cbPalette)+
-    ggtitle(paste("Quality by cycle in", summaryTable[i,]$sample, sep=" ")))
+    ggtitle(paste("Quality by cycle in", summaryTable[i,]$sample, sep=" ")) +
+          theme(axis.title = element_text(face="bold", size=15),
+                axis.text = element_text(size=15),
+                plot.title = element_text(size=15, face ="bold")))
   
   print(ggplot(quality_distribution_metrics.table, aes(x=QUALITY, y=COUNT_OF_Q)) + 
     geom_bar(stat="identity", fill="#0072B2") +
     xlab("Quality Score") + ylab("Observations") +
     scale_fill_manual(name="", values=cbPalette)+
-    ggtitle(paste("Quality score distribution in", summaryTable[i,]$sample, sep=" ")))
+    ggtitle(paste("Quality score distribution in", summaryTable[i,]$sample, sep=" ")) +
+          theme(axis.title = element_text(face="bold", size=15),
+                axis.text = element_text(size=15),
+                plot.title = element_text(size=15, face ="bold")))
 }
 
 ggplot(summaryTable, aes(x=sampleShort, y=PCT_OFF_BAIT, fill=sampleShort)) + 
   geom_bar(stat="identity") +
   xlab("Sample") + ylab("Percentage off bait") +
   scale_fill_manual(name="", values=cbPalette)+
-  ggtitle("Percentage off bait")
+  ggtitle("Percentage off bait") +
+  theme(axis.title = element_text(face="bold", size=15),
+        axis.text = element_text(size=15),
+        legend.text = element_text(size=15),
+        plot.title = element_text(size=15, face ="bold"))
 
 ggplot(summaryTable, aes(x=sampleShort, y=MEAN_TARGET_COVERAGE, fill=sampleShort)) + 
   geom_bar(stat="identity") +
   xlab("Sample") + ylab("Mean target coverage") +
   scale_fill_manual(name="", values=cbPalette) +
-  ggtitle("Mean target coverage")
+  ggtitle("Mean target coverage") +
+  theme(axis.title = element_text(face="bold", size=15),
+        axis.text = element_text(size=15),
+        legend.text = element_text(size=15),
+        plot.title = element_text(size=15, face ="bold"))
 
 ggplot(summaryTableMelted,aes(x = sampleShort, y = value)) + 
   geom_bar(aes(fill=variable), stat="identity",position = "dodge") +
   xlab("Sample") + ylab("Percentage") +
   scale_fill_manual(name="", values=cbPalette) +
-  ggtitle("Percentage target bases")
+  ggtitle("Percentage target bases") +
+  theme(axis.title = element_text(face="bold", size=15),
+        axis.text = element_text(size=15),
+        legend.text = element_text(size=15),
+        plot.title = element_text(size=15, face ="bold"))
 
 #Plot bait and target interval files.
 plot(0:10, type = "n", xaxt="n", yaxt="n", bty="n", xlab = "", ylab = "")
@@ -77,11 +100,14 @@ text(5, 7, paste("Target interval file= ", unique(summaryTable$targetIntervals),
 
 dev.off() #close pdf
 
+#Transpose and write table
+summaryTableT = t(summaryTable)
+colnames(summaryTableT) = summaryTableT[1,]
+write.table(summaryTableT, file=paste(runName,"HSMetric_summary.transposed.txt", sep="."), col.names=FALSE, na="", quote=FALSE, sep="\t")
+
 #Generate .html based on R Markdown
 workingDir = getwd()
 knit(paste(rootDir,"plotIlluminaMetrics_markdown.Rmd", sep="/"))
-markdownToHTML("plotIlluminaMetrics_markdown.md", paste(runName,"picardMetrics.html",sep="."), options=c("use_xhml"))
+markdownToHTML("plotIlluminaMetrics_markdown.md", paste(runName,"picardMetrics.html",sep="."), options=c("use_xhml"), stylesheet=paste(rootDir,"markdown.css", sep="/"))
+#knit_bootstrap(paste(rootDir,"plotIlluminaMetrics_markdown.Rmd", sep="/"), output=paste(runName,"picardMetrics.bootstrap.html",sep="."))
 
-#Transpose and write table
-summaryTableT = t(summaryTable)
-write.table(summaryTableT, file=paste(runName,"HSMetric_summary.transposed.txt", sep="."), col.names=FALSE, na="", quote=FALSE, sep="\t")

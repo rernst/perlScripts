@@ -15,7 +15,7 @@ my $runName = (split("/", $runDir))[-1];
 
 ### Setup variables
 my $fileName = $runName.".HSMetric_summary.txt";
-open(SUMFILE, ">", $fileName) || die ("Can't open if $fileName");
+open(SUMFILE, ">", $fileName) || die ("Can't create $fileName");
 my @files = grep -f, <*/*HSMetrics\.txt>;
 my $printedHeader = 0;
 
@@ -50,4 +50,4 @@ foreach my $file (@files) {
 
 ### Run R plot script and markdown to generate pdf
 `Rscript $rootDir/plotIlluminaMetrics.R $fileName $rootDir $runName`;
-`rm plotIlluminaMetrics_markdown.md`;
+#`rm plotIlluminaMetrics_markdown.md`;

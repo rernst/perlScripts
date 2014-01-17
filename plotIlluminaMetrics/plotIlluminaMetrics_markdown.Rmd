@@ -9,7 +9,7 @@ for(i in 1:nrow(summaryTable)) {
   quality_by_cycle_metrics = paste(wd_sample,"_MERGED_sorted_dedup_MultipleMetrics.txt.quality_by_cycle_metrics", sep="")
   quality_distribution_metrics = paste(wd_sample,"_MERGED_sorted_dedup_MultipleMetrics.txt.quality_distribution_metrics", sep="")
   
-  insert_size_metrics.table = read.table(file=insert_size_metrics, skip=8, head=TRUE)
+  insert_size_metrics.table = read.table(file=insert_size_metrics, skip=10, head=TRUE)
   quality_by_cycle_metrics.table = read.table(file=quality_by_cycle_metrics, head=TRUE)
   quality_distribution_metrics.table = read.table(file=quality_distribution_metrics, head=TRUE)
   
@@ -19,19 +19,28 @@ for(i in 1:nrow(summaryTable)) {
     geom_bar(stat="identity", width=1, fill="#0072B2") +
     xlab("Insert size") + ylab("Count") +
     scale_fill_manual(name="", values=cbPalette)+
-    ggtitle(paste("Insert size for all reads in", summaryTable[i,]$sample, sep=" ")))
+    ggtitle(paste("Insert size for all reads in", summaryTable[i,]$sample, sep=" ")) +
+    theme(axis.title = element_text(face="bold", size=15),
+          axis.text = element_text(size=15),
+          plot.title = element_text(size=15, face ="bold")))
   
   print(ggplot(quality_by_cycle_metrics.table, aes(x=CYCLE, y=MEAN_QUALITY)) + 
     geom_bar(stat="identity", width=1, fill="#0072B2") +
     xlab("Cycle") + ylab("Mean Quality") +
     scale_fill_manual(name="", values=cbPalette)+
-    ggtitle(paste("Quality by cycle in", summaryTable[i,]$sample, sep=" ")))
+    ggtitle(paste("Quality by cycle in", summaryTable[i,]$sample, sep=" ")) +
+          theme(axis.title = element_text(face="bold", size=15),
+                axis.text = element_text(size=15),
+                plot.title = element_text(size=15, face ="bold")))
   
   print(ggplot(quality_distribution_metrics.table, aes(x=QUALITY, y=COUNT_OF_Q)) + 
     geom_bar(stat="identity", fill="#0072B2") +
     xlab("Quality Score") + ylab("Observations") +
-    scale_fill_manual(name="", values=cbPalette)+
-    ggtitle(paste("Quality score distribution in", summaryTable[i,]$sample, sep=" ")))
+    scale_fill_manual(name="", values=cbPalette) +
+    ggtitle(paste("Quality score distribution in", summaryTable[i,]$sample, sep=" ")) +
+          theme(axis.title = element_text(face="bold", size=15),
+                axis.text = element_text(size=15),
+                plot.title = element_text(size=15, face ="bold")))
 }
 ```
 
@@ -46,13 +55,21 @@ ggplot(summaryTable, aes(x=sampleShort, y=PCT_OFF_BAIT, fill=sampleShort)) +
   geom_bar(stat="identity") +
   xlab("Sample") + ylab("Percentage off bait") +
   scale_fill_manual(name="", values=cbPalette)+
-  ggtitle("Percentage off bait")
+  ggtitle("Percentage off bait") +
+  theme(axis.title = element_text(face="bold", size=15),
+        axis.text = element_text(size=15),
+        legend.text = element_text(size=15),
+        plot.title = element_text(size=15, face ="bold"))
 
 ggplot(summaryTable, aes(x=sampleShort, y=MEAN_TARGET_COVERAGE, fill=sampleShort)) + 
   geom_bar(stat="identity") +
   xlab("Sample") + ylab("Mean target coverage") +
   scale_fill_manual(name="", values=cbPalette) +
-  ggtitle("Mean target coverage")
+  ggtitle("Mean target coverage") +
+  theme(axis.title = element_text(face="bold", size=15),
+        axis.text = element_text(size=15),
+        legend.text = element_text(size=15),
+        plot.title = element_text(size=15, face ="bold"))
 ```
 
 ```{r echo=FALSE, fig.width=20, fig.height=10}
@@ -60,5 +77,16 @@ ggplot(summaryTableMelted,aes(x = sampleShort, y = value)) +
   geom_bar(aes(fill=variable), stat="identity",position = "dodge") +
   xlab("Sample") + ylab("Percentage") +
   scale_fill_manual(name="", values=cbPalette) +
-  ggtitle("Percentage target bases")
+  ggtitle("Percentage target bases") +
+  theme(axis.title = element_text(face="bold", size=15),
+        axis.text = element_text(size=15),
+        legend.text = element_text(size=15),
+        plot.title = element_text(size=15, face ="bold"))
+```
+
+Hybrid selection specific metrics summary table
+========================================================
+
+```{r echo=FALSE, results='asis'}
+print(xtable(summaryTableT[c(6:(nrow(summaryTableT)-3)),]),type='html')
 ```
