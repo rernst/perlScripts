@@ -7,15 +7,23 @@
 
 use strict;
 use warnings;
+use Getopt::Long;
 
-### Command line arguments
-if ($#ARGV != 2 ) {
-  print "usage: $0 fastqFile barcodeFile sampleFile\n";
-  exit;
-}
-my $fastqFile = $ARGV[0];
-my $barcodeFile = $ARGV[1];
-my $sampleFile = $ARGV[2];
+### Parse and check input arguments
+my $fastqFile;
+my $barcodeFile;
+my $sampleFile;
+
+die usage() if @ARGV == 0;
+GetOptions (
+	'fastq=s' => \$fastqFile,
+	'barcode=s' => \$barcodeFile,
+	'sample=s' => \$sampleFile
+) or die usage();
+
+die usage() unless $fastqFile;
+die usage() unless $barcodeFile;
+die usage() unless $sampleFile;
 
 ### Parse barcode file
   # Name	Sequence	Orientation 
@@ -165,3 +173,12 @@ for my $key ( keys(%countBarcodes)){
     print "\n";
 }
 print "Total number of reads \t $countReads\n";
+
+
+### Functions
+sub usage{
+	warn <<END;
+	Usage: perl barcode_splitter.pl -fastq [fastqFile] -barcode [barcodeFile] -sample [sampleFile]
+END
+	exit;
+}
