@@ -40,7 +40,9 @@ while (my $line = <FILE>) {
 }
 
 ### Parse VCF File:
-open(FILE, $vcfFile) || die("Can't open $vcfFile");
+if ($vcfFile =~ m/.gz$/){ open(FILE, "bgzip -c -d $vcfFile |") || die("Can't open $vcfFile"); }
+elsif ($vcfFile =~ m/.vcf$/){ open(FILE, $vcfFile) || die("Can't open $vcfFile"); }
+else { die usage(); }
 
 while (my $line = <FILE>) {
 	if ($line =~ /^##/) { next; } #skip header lines
@@ -147,7 +149,7 @@ foreach my $childID (keys(%samples)) {
 ### Functions
 sub usage{
 	warn <<END;
-	Run by typing:	perl trioConcordance.pl -ped [pedFile] -vcf [vcfFile]
+	Usage:	perl trioConcordance.pl -ped [pedFile] -vcf [vcfFile.vcf | vcfFile.gz]
 END
 	exit;
 }
