@@ -30,7 +30,11 @@ die usage() unless $genome_dict_file;
 if ($sort) {
 	my $input_bed_file = $bed_file;
 	$bed_file =~ s/.bed/_sorted.bed/;
-	`awk '{FS=""; print "chr"\$0}' $input_bed_file | sed 's/chrX/chr23/g' | sed 's/chrY/chr24/g'|sed 's/chrMT/chr25/g' | sort -k 1.4,1n -k 2,2n -k 3,3n | sed 's/chr23/chrX/g' |  sed 's/chr24/chrY/g' | sed 's/chr25/chrMT/g' | sed 's/^chr//g' > $bed_file`
+	`awk '{FS=""; print "chr"\$0}' $input_bed_file |
+	sed 's/chrX/chr23/g' | sed 's/chrY/chr24/g'|sed 's/chrMT/chr25/g' |
+	sort -k 1.4,1n -k 2,2n -k 3,3n |
+	sed 's/chr23/chrX/g' | sed 's/chr24/chrY/g' | sed 's/chr25/chrMT/g' |
+	sed 's/^chr//g' > $bed_file`;
 }
 
 ### gatk list file
