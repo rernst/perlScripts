@@ -58,7 +58,7 @@ if ($picard){
 ### Functions
 sub usage{
 	warn <<END;
-	Usage: perl bedConverter.pl -bed <file.bed> -dict <genome.dict> [-gatk -picard]
+	Usage: perl bedConverter.pl -bed <file.bed> -dict <genome.dict> [-gatk -picard -sort]
 END
 	exit;
 }
