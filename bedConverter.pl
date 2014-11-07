@@ -42,9 +42,9 @@ if ($sort) {
 	$bed_file =~ s/.bed/_sorted.bed/;
 	
 	`awk '{FS=""; print "chr"\$0}' $input_bed_file |
-	sed 's/chrX/chr23/g' | sed 's/chrY/chr24/g'|sed 's/chrMT/chr25/g' |
+	sed 's/chrX/chr9997/g' | sed 's/chrY/chr9998/g'|sed 's/chrMT/chr9999/g' |
 	sort -k 1V -k 2n -k 3n |
-	sed 's/chr23/chrX/g' | sed 's/chr24/chrY/g' | sed 's/chr25/chrMT/g' |
+	sed 's/chr9997/chrX/g' | sed 's/chr9998/chrY/g' | sed 's/chr9999/chrMT/g' |
 	sed 's/^chr//g' > $bed_file`;
 }
 
