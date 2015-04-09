@@ -80,7 +80,7 @@ my $fragment;
 my $fragment_start;
 my $fragment_end;
 my $quality;
-my $complete;
+my $complete = 0;
 my $completeFragments;
 my $sample;
 
@@ -127,7 +127,7 @@ while (<FILE>) {
     if (($keyForward ne "") && ($keyReverse ne "")) {  
     #if (length($keyForward . $keyReverse) > 3){
       $read =~ m/$forwardBarcodes{$keyForward}(.*)$reverseBarcodes{$keyReverse}/; #find fragment
-      if (length($1)) {
+      if ($1) {
 	$fragmentLength{$keyForward . $keyReverse} += length($1);
 	
 	$fragment = $1; #save fragment
